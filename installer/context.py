@@ -1,7 +1,9 @@
 from contextlib import contextmanager
 from pathlib import Path
-from tempfile import TemporaryDirectory
+from shutil import rmtree
+from tempfile import mkdtemp
 
+import click
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from .architecture import TEMPLATES_DIR
@@ -13,10 +15,20 @@ from .models import Profile, Service
 
 
 @contextmanager
-def profile_context(profile: Profile):
-    with TemporaryDirectory() as tmp_folder:
+def profile_context(profile: Profile, debug: bool):
+    tmp_folder = mkdtemp()
+    try:
         build_profile(profile, tmp_folder)
         yield Path(tmp_folder) / f"{profile.name}.yml"
+    finally:
+        if not debug:
+            rmtree(tmp_folder)
+        else:
+            click.secho(
+                "WARNING: tmp folder is not removed, you must clean it manually!",
+                fg="bright_yellow",
+            )
+            click.secho(tmp_folder, fg="bright_yellow")
 
 
 def build_profile(profile: Profile, folder: str):

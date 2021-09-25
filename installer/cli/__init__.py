@@ -73,8 +73,11 @@ def secrets_list(service: str, raw):
 
 
 @cli.group("docker", no_args_is_help=True, help="Manage the deployment")
-def docker():
-    pass
+@click.option("--debug", is_flag=True)
+@click.pass_context
+def docker(ctx: click.Context, debug: bool):
+    ctx.ensure_object(dict)
+    ctx.obj["debug"] = debug
 
 
 @docker.command("up", help="Create and start service containers")

@@ -2,6 +2,8 @@ import logging
 import subprocess
 from typing import Dict, List
 
+import click
+
 from ..architecture import FENIX_DIR
 from ..context import profile_context
 from ..controller import get_default_profile
@@ -12,8 +14,9 @@ logging.basicConfig()
 
 
 def run_docker_compose_command(args: List[str]):
+    debug = click.get_current_context().obj["debug"]
     profile = get_default_profile()
-    with profile_context(profile) as profile_path:
+    with profile_context(profile, debug) as profile_path:
         args = ["docker-compose", "-f", profile_path.as_posix()] + args
         run_command(args)
 
