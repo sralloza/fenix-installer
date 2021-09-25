@@ -27,6 +27,14 @@ if FENIX_DIR.name != "docker":
     )
     sys.exit(1)
 
+if not os.getenv("AWS_ACCESS_KEY_ID"):
+    click.secho("ERROR: must set env var AWS_ACCESS_KEY_ID", fg="bright_red")
+    sys.exit(1)
+
+if not os.getenv("AWS_SECRET_ACCESS_KEY"):
+    click.secho("ERROR: must set env var AWS_SECRET_ACCESS_KEY", fg="bright_red")
+    sys.exit(1)
+
 INSTALLER_MODULE_DIR = Path(__file__).parent
 INSTALLER_DATA_DIR = INSTALLER_MODULE_DIR / "data"
 CONFIG_DIR = INSTALLER_DATA_DIR / "config"
