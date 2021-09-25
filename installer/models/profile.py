@@ -10,3 +10,7 @@ class Profile:
     https: bool
     traefik_token: Optional[str]
     enabled: bool
+
+    @property
+    def filepath(self):
+        return self.name+".yml"
