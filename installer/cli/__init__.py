@@ -1,12 +1,15 @@
+from pathlib import Path
+from sys import is_finalizing
 from typing import List, Optional
 
 import click
 
 from ..schemas import validate_all
-from .core import DockerCompose
-from .utils import check_env, get_service_names
+from .core import DockerCompose, Secrets
+from .utils import check_env, get_service_names, get_service_names_with_secrets
 
 SERVICE_NAMES = get_service_names()
+SERVICES_NAMES_WITH_SECRETS = get_service_names_with_secrets()
 _S = List[str]
 
 services = click.argument(
@@ -14,6 +17,12 @@ services = click.argument(
 )
 service = click.argument(
     "service", metavar="SERVICE", nargs=1, type=click.Choice(SERVICE_NAMES)
+)
+service_with_secret = click.argument(
+    "service",
+    metavar="SERVICE",
+    nargs=1,
+    type=click.Choice(SERVICES_NAMES_WITH_SECRETS),
 )
 
 
@@ -27,6 +36,41 @@ def validate():
     click.secho("Validating config files...")
     validate_all()
     click.secho("All config files are OK", fg="bright_green")
+
+
+@cli.group("secrets", no_args_is_help=True, help="Manage secrets")
+def secrets():
+    pass
+
+
+@secrets.command("add", help="Add one service secret")
+@service
+@click.argument("key")
+@click.argument("value")
+def secrets_add(service: str, key: str, value: str):
+    Secrets.add(service, key, value)
+
+
+@secrets.command("add-from-env", help="Add secrets from env file")
+@service
+@click.argument("env_file_path", type=click.Path(exists=True))
+def secrets_add_from_env(service: str, env_file_path: str):
+    click.confirm(f"Confirm adding secrets from {env_file_path!r}?", abort=True)
+    Secrets.add_from_env(service, env_file_path)
+
+
+@secrets.command("remove", help="Remove one secret from service")
+@service_with_secret
+@click.argument("key")
+def secrets_remove(service: str, key: str):
+    Secrets.remove(service, key)
+
+
+@secrets.command("list", help="List service secrets")
+@service_with_secret
+@click.option("-r", "--raw", is_flag=True, help="Show unencrypted secrets")
+def secrets_list(service: str, raw):
+    Secrets.list(service, raw)
 
 
 @cli.group("docker", no_args_is_help=True, help="Manage the deployment")

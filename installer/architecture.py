@@ -1,9 +1,9 @@
 import os
 import platform
 import sys
+from pathlib import Path
 
 import click
-from pathlib import Path
 
 if platform.system() == "Linux":
     DEFAULT_PROFILE = "prod.unsecure.yml"
@@ -27,8 +27,9 @@ if FENIX_DIR.name != "docker":
     )
     sys.exit(1)
 
-INSTALLER_ROOT_FOLDER = Path(__file__).parent.parent
-CONFIG_DIR = INSTALLER_ROOT_FOLDER / "config"
-SCHEMAS_DIR = INSTALLER_ROOT_FOLDER / "schemas"
-TEMPLATES_DIR = INSTALLER_ROOT_FOLDER / "templates"
-MANIFESTS_DIR = FENIX_DIR.parent
+INSTALLER_MODULE_DIR = Path(__file__).parent
+INSTALLER_DATA_DIR = INSTALLER_MODULE_DIR / "data"
+CONFIG_DIR = INSTALLER_DATA_DIR / "config"
+SCHEMAS_DIR = INSTALLER_DATA_DIR / "schemas"
+TEMPLATES_DIR = INSTALLER_DATA_DIR / "templates"
+# MANIFESTS_DIR = FENIX_DIR.parent

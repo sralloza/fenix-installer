@@ -4,12 +4,27 @@ from typing import List
 
 from click import BadOptionUsage, Context, Option
 
-from ..inputs import get_yml
+from ..inputs import get_services
+from ..models import Service
+from .exceptions import ServiceNotFoundError
 
 
 def get_service_names() -> List[str]:
-    services = get_yml("services")
-    return [x["name"] for x in services]
+    services = get_services()
+    return [x.name for x in services]
+
+
+def get_service_names_with_secrets() -> List[str]:
+    services = get_services()
+    return [x.name for x in services if x.secrets]
+
+
+def get_service_by_name(service_name: str) -> Service:
+    services = get_services()
+    for service in services:
+        if service.name == service_name:
+            return service
+    raise ServiceNotFoundError(service_name)
 
 
 def shlex_join(split_command):

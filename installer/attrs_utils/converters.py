@@ -10,4 +10,4 @@ def builder(value: Dict[str, str]):
 def default_list(value):
     if value:
         return value
-    return list()
+    return []

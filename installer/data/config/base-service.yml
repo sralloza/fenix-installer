@@ -8,12 +8,12 @@
 
   auth:
   enabled: true
+  secrets: false
   service_name:
   traefik_port:
 
   commands:
   commands_https:
-  env_file:
   environment:
   port_map:
   volumes:

@@ -7,8 +7,8 @@ services:
   {{ service.name }}:
     image: {{ image }}
     container_name: {{ service.name }}
-    {% if service.env_file %}
-    env_file: {{ service.env_file }}
+    {% if service.secrets %}
+    env_file: {{ service.name }}.env
     {% endif %}
     {% if not service.disable_restart %}
     restart: unless-stopped

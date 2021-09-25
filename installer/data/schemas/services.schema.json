@@ -12,7 +12,7 @@
       "traefik_port",
       "commands",
       "commands_https",
-      "env_file",
+      "secrets",
       "environment",
       "port_map",
       "volumes",
@@ -72,8 +72,8 @@
           "type": "string"
         }
       },
-      "env_file": {
-        "type": ["string", "null"]
+      "secrets": {
+        "type": "boolean"
       },
       "environment": {
         "type": ["object", "null"],

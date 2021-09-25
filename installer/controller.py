@@ -1,25 +1,7 @@
-from functools import lru_cache
-from typing import Dict, Iterator, List
+from typing import Iterator
 
-from .inputs import get_yml
+from .inputs import get_auths, get_profiles
 from .models import Profile, Service
-
-
-@lru_cache
-def get_services():
-    services_data = get_yml("services")
-    return [Service(**x) for x in services_data]
-
-
-@lru_cache
-def get_profiles():
-    profiles_data = get_yml("profiles")
-    return [Profile(**x) for x in profiles_data]
-
-
-@lru_cache
-def get_auths() -> Dict[str, List[str]]:
-    return get_yml("auths")
 
 
 def get_commands(service: Service, profile: Profile) -> Iterator[str]:
@@ -97,3 +79,7 @@ def get_labels(service, profile: Profile) -> Iterator[str]:
             yield f"traefik.http.routers.{service.name}-https.priority={common_priority}"
             yield f"traefik.http.routers.{service.name}-https.rule={rules}"
             yield f"traefik.http.routers.{service.name}-https.service={service.service_name or service.name}"
+
+
+def get_default_profile() -> Profile:
+    return get_profiles()[0]

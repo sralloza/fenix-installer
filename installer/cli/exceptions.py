@@ -1,4 +1,6 @@
-from click.exceptions import ClickException
+from click import ClickException
+
+from ..models import Service
 
 
 class CommandNotImplementedError(ClickException):
@@ -6,3 +8,35 @@ class CommandNotImplementedError(ClickException):
 
     def __init__(self):
         super().__init__("This command is not implemented yet")
+
+
+class SecretsNotFoundError(ClickException):
+    """Raised if no secrets were found for service."""
+
+    def __init__(self, service: Service):
+        self.service = service
+        msg = f"Secrets of service {service.name!r} can't be found"
+        super().__init__(msg)
+
+
+class SecretNotFound(ClickException):
+    """Raised if a particular secret is not found for a service."""
+
+    def __init__(self, service: Service, key: str):
+        self.service = service
+        self.key = key
+        msg = f"Service {service.name!r} has no secret named {key!r}"
+        super().__init__(msg)
+
+
+class ServiceNotFoundError(ClickException):
+    """Raised if no service was found with a specified name."""
+
+    def __init__(self, service_name: str):
+        self.service_name = service_name
+        msg = f"No service was found with name {service_name!r}"
+        super().__init__(msg)
+
+
+class TryAgainError(ClickException):
+    """Raised when the client needs to run a command again."""

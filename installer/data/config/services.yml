@@ -8,12 +8,12 @@
 
   auth:
   enabled: true
+  secrets: false
   service_name:
   traefik_port: 80
 
   commands:
   commands_https:
-  env_file:
   environment:
   port_map:
   volumes:
@@ -34,6 +34,7 @@
 
   auth: default
   enabled: true
+  secrets: false
   service_name: api@internal
   traefik_port: 80
 
@@ -55,7 +56,6 @@
     - --certificatesresolvers.letsencrypt.acme.httpchallenge=true
     - --certificatesresolvers.letsencrypt.acme.storage=/acme/acme.json
     - --entrypoints.https.address=:443
-  env_file:
   environment:
   port_map: [80, 8080]
   volumes:
@@ -77,12 +77,12 @@
 
   auth:
   enabled: true
+  secrets: true
   service_name:
   traefik_port: 80
 
   commands:
   commands_https:
-  env_file: floor-bot.env
   environment:
   port_map:
   volumes:
@@ -100,12 +100,12 @@
 
   auth:
   enabled: true
+  secrets: false
   service_name:
   traefik_port:
 
   commands:
   commands_https:
-  env_file:
   environment:
   port_map: [6379]
   volumes:
@@ -123,12 +123,12 @@
 
   auth:
   enabled: true
+  secrets: true
   service_name:
   traefik_port: 80
 
   commands:
   commands_https:
-  env_file: ticket-bot.env
   environment:
   port_map:
   volumes:
@@ -146,12 +146,12 @@
 
   auth: default
   enabled: false
+  secrets: false
   service_name:
   traefik_port: 80
 
   commands:
   commands_https:
-  env_file:
   environment:
   port_map:
   volumes:
@@ -171,12 +171,12 @@
 
   auth: default
   enabled: false
+  secrets: false
   service_name:
   traefik_port: 80
 
   commands:
   commands_https:
-  env_file:
   environment:
   port_map:
   volumes:
@@ -196,12 +196,12 @@
 
   auth: default
   enabled: false
+  secrets: false
   service_name:
   traefik_port: 80
 
   commands:
   commands_https:
-  env_file:
   environment:
     PMA_HOST: database
   port_map:
@@ -222,12 +222,12 @@
 
   auth:
   enabled: false
+  secrets: true
   service_name:
   traefik_port:
 
   commands:
   commands_https:
-  env_file: database.env
   environment:
   port_map:
   volumes:
@@ -246,12 +246,12 @@
 
   auth: default
   enabled: false
+  secrets: false
   service_name:
   traefik_port: 3000
 
   commands:
   commands_https:
-  env_file:
   environment:
     GF_INSTALL_PLUGINS: grafana-piechart-panel
   port_map:
@@ -271,6 +271,7 @@
 
   auth: default
   enabled: false
+  secrets: false
   service_name:
   traefik_port: 9090
 
@@ -278,7 +279,6 @@
     - --config.file=/etc/prometheus/prometheus-settings.yml
     - --storage.tsdb.path=/prometheus
   commands_https:
-  env_file:
   environment:
   port_map:
   volumes:

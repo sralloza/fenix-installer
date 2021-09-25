@@ -18,13 +18,13 @@ class Service:
     # Special settings
     auth: Optional[str]
     enabled: bool = attr.ib(validator=validate_required_services)
+    secrets: bool
     service_name: Optional[str]
     traefik_port: Optional[int]
 
     # Docker settings
     commands_https: List[str] = attr.ib(converter=default_list)
     commands: List[str] = attr.ib(converter=default_list)
-    env_file: Optional[str]
     _environment: Dict[str, str]
     port_map: List[int] = attr.ib(converter=default_list)
     volumes: List[str] = attr.ib(converter=default_list)
@@ -38,7 +38,7 @@ class Service:
         if isinstance(self._environment, dict):
             environ = deepcopy(self._environment)
         else:
-            environ = dict()
+            environ = {}
         environ["TZ"] = "Europe/Madrid"
         return environ
 

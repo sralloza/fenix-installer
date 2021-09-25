@@ -1,56 +1,101 @@
 import shlex
+from pathlib import Path
 from typing import List, Optional
 
-from ..architecture import DEFAULT_PROFILE
-from .process import run_command
+import click
 
-BASE_COMMAND = ["docker-compose", "-f", DEFAULT_PROFILE]
+from ..aws import get_secrets, set_secrets
+from .exceptions import SecretNotFound
+from .process import run_docker_compose_command
+from .utils import get_service_by_name
+
 _S = List[str]
+
+
+class Secrets:
+    @staticmethod
+    def add(service_name: str, key: str, value: str):
+        service = get_service_by_name(service_name)
+        secrets = get_secrets(service)
+        secrets.append(f"{key}={value}")
+        set_secrets(service, secrets)
+
+    @staticmethod
+    def add_from_env(service_name: str, env_file_path: str):
+        service = get_service_by_name(service_name)
+        env_secrets = Path(env_file_path).read_text("utf8").splitlines()
+        secrets = get_secrets(service)
+        secrets.extend(env_secrets)
+        set_secrets(service, secrets)
+
+    @staticmethod
+    def remove(service_name: str, key: str):
+        service = get_service_by_name(service_name)
+        secrets = get_secrets(service)
+        for secret in secrets:
+            secret_key, _ = secret.split("=", 1)
+            if secret_key == key:
+                secrets.remove(secret)
+                return set_secrets(service, secrets)
+        raise SecretNotFound(service, key)
+
+    @staticmethod
+    def list(service_name: str, raw: bool):
+        service = get_service_by_name(service_name)
+        secrets = get_secrets(service)
+        for secret in secrets:
+            key, value = secret.split("=", 1)
+            msg = f"{key}="
+            if raw:
+                msg += value
+            else:
+                msg += "*" * 8
+            click.echo(msg)
 
 
 class DockerCompose:
     @staticmethod
     def up_d(services: _S):
-        args = BASE_COMMAND + ["up", "-d"]
+        args = ["up", "-d"]
         if services:
             args.append(shlex.join(services))
 
-        return run_command(args)
+        return run_docker_compose_command(args)
 
     @staticmethod
     def down(volumes: bool):
-        args = BASE_COMMAND + ["down"]
+        args = ["down"]
         if volumes:
             args.append("-v")
-        return run_command(args)
+        return run_docker_compose_command(args)
 
     @staticmethod
     def start(services: _S):
-        args = BASE_COMMAND + ["start"]
+        args = ["start"]
         if services:
             args.append(shlex.join(services))
 
-        return run_command(args)
+        return run_docker_compose_command(args)
 
     @staticmethod
     def stop(services: _S):
-        args = BASE_COMMAND + ["stop"]
+        args = ["stop"]
         if services:
             args.append(shlex.join(services))
 
-        return run_command(args)
+        return run_docker_compose_command(args)
 
     @staticmethod
     def restart(services: _S):
-        args = BASE_COMMAND + ["restart"]
+        args = ["restart"]
         if services:
             args.append(shlex.join(services))
 
-        return run_command(args)
+        return run_docker_compose_command(args)
 
     @staticmethod
     def ps():
-        return run_command(BASE_COMMAND + ["ps"])
+        return run_docker_compose_command(["ps"])
 
     @staticmethod
     def logs(
@@ -60,7 +105,7 @@ class DockerCompose:
         timestamps: bool = False,
         no_prefix: bool = False,
     ):
-        args = BASE_COMMAND + ["logs"]
+        args = ["logs"]
         if follow:
             args.append("-f")
         if timestamps:
@@ -72,7 +117,7 @@ class DockerCompose:
         if services:
             args.append(shlex.join(services))
 
-        return run_command(args)
+        return run_docker_compose_command(args)
 
     @staticmethod
     def exec(
@@ -85,7 +130,7 @@ class DockerCompose:
         env: List[str],
         workdir: Optional[str],
     ):
-        args = BASE_COMMAND + ["exec"]
+        args = ["exec"]
         if detach:
             args.append("-d")
         if privileged:
@@ -101,15 +146,15 @@ class DockerCompose:
             args.extend(["-w", workdir])
 
         args.extend([service, shlex.quote(command)])
-        return run_command(args)
+        return run_docker_compose_command(args)
 
     @staticmethod
     def pull(services: _S):
-        args = BASE_COMMAND + ["pull"]
+        args = ["pull"]
         if services:
             args.append(shlex.join(services))
 
-        return run_command(args)
+        return run_docker_compose_command(args)
 
     @classmethod
     def dev(cls, service: str, tail: int = None, timestamps: bool = False):
