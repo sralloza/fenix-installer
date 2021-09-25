@@ -17,7 +17,7 @@ logging.basicConfig()
 
 def is_docker_running():
     try:
-        subprocess.check_output(["docker", "info"], stderr=False)
+        subprocess.check_output(["docker", "info"], stderr=subprocess.STDOUT)
         return True
     except subprocess.CalledProcessError:
         return False
