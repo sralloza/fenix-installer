@@ -1,0 +1,51 @@
+version: "3.7"
+
+services:
+{% for service in (services | selectattr("enabled")) %}
+  {% set image=service.image.prod if profile.prod else service.image.dev %}
+  {% if image %}
+  {{ service.name }}:
+    image: {{ image }}
+    container_name: {{ service.name }}
+    {% if service.env_file %}
+    env_file: {{ service.env_file }}
+    {% endif %}
+    {% if not service.disable_restart %}
+    restart: unless-stopped
+    {% endif %}
+    {% if service.port_map %}
+    ports:
+    {% for port in service.port_map %}
+      - {{ port }}:{{ port }}
+    {% endfor %}
+    {% if service.name == "traefik" and profile.https %}
+      - 443:443
+    {% endif %}
+    {% endif %}
+    {% for volume in service.volumes | sort %}
+    {% if loop.first %}
+    volumes:
+    {% endif %}
+      - {{ volume }}
+    {% endfor %}
+    {% for key, value in service.environment.items() %}
+    {% if loop.first %}
+    environment:
+    {% endif %}
+      {{ key }}: {{ value }}
+    {% endfor %}
+    {% for command in get_commands(service, profile) | sort %}
+    {% if loop.first %}
+    command:
+    {% endif %}
+      - {{ command }}
+    {% endfor %}
+    {% for label in get_labels(service, profile) | sort %}
+    {% if loop.first %}
+    labels:
+    {% endif %}
+      - {{ label }}
+    {% endfor %}
+
+    {% endif %}
+{% endfor %}

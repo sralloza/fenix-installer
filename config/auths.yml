@@ -1,0 +1,5 @@
+# echo (htpasswd -nb user password) | sed -e s/\\\$/\\\$\\\$/g
+default:
+  - sralloza:$$apr1$$AYdZEjZW$$ilNa649UR8eefXZI.59Sm0
+api:
+  - api:$$apr1$$vkvLjnFI$$Tg/nu8i.nhZyZZ0DLcI3t.

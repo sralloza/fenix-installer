@@ -1,0 +1,33 @@
+{
+    "title": "Profiles",
+    "type": "array",
+    "items": {
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "https",
+        "prod",
+        "enabled"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "https": {
+          "type": "boolean"
+        },
+        "prod": {
+          "type": "boolean"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "traefik_token": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  }

@@ -1,0 +1,22 @@
+- name: <insert-name>
+  image:
+    dev:
+    prod:
+  url:
+    dev:
+    prod:
+
+  auth:
+  enabled: true
+  service_name:
+  traefik_port:
+
+  commands:
+  commands_https:
+  env_file:
+  environment:
+  port_map:
+  volumes:
+
+  disable_restart: false
+  path_prefix:

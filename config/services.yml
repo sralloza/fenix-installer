@@ -1,0 +1,289 @@
+- name: default
+  image:
+    dev: nginx
+    prod: sralloza/default
+  url:
+    dev: default.local.es
+    prod: sralloza.es
+
+  auth:
+  enabled: true
+  service_name:
+  traefik_port: 80
+
+  commands:
+  commands_https:
+  env_file:
+  environment:
+  port_map:
+  volumes:
+    - ./settings/default:/etc/nginx/conf.d
+    - ./logs:/var/log/nginx
+
+  disable_restart: false
+  path_prefix:
+
+
+- name: traefik
+  image:
+    dev: traefik:2.4
+    prod: traefik:2.4
+  url:
+    dev: traefik.local.es
+    prod: traefik.sralloza.es
+
+  auth: default
+  enabled: true
+  service_name: api@internal
+  traefik_port: 80
+
+  commands:
+    - --accesslog.fields.names.StartUTC=drop
+    - --accesslog.filePath=/var/log/nginx/traefik-access.log
+    - --api
+    - --api.dashboard=true
+    - --api.insecure=true
+    - --entrypoints.http.address=:80
+    - --log.level=INFO
+    - --metrics.prometheus.addEntryPointsLabels=true
+    - --metrics.prometheus.addServicesLabels=true
+    - --metrics.prometheus=true
+    - --providers.docker
+  commands_https:
+    - --certificatesresolvers.letsencrypt.acme.email=admin@sralloza.es
+    - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=http
+    - --certificatesresolvers.letsencrypt.acme.httpchallenge=true
+    - --certificatesresolvers.letsencrypt.acme.storage=/acme/acme.json
+    - --entrypoints.https.address=:443
+  env_file:
+  environment:
+  port_map: [80, 8080]
+  volumes:
+    - ./data/acme:/acme
+    - ./data/zoneinfo:/usr/share/zoneinfo:ro
+    - ./logs:/var/log/nginx
+    - /var/run/docker.sock:/var/run/docker.sock
+
+  disable_restart: false
+  path_prefix:
+
+- name: floor-bot
+  image:
+    dev: sralloza/floor-bot:stable
+    prod: sralloza/floor-bot:stable-arm
+  url:
+    dev: floor-bot.local.es
+    prod: floor-bot.sralloza.es
+
+  auth:
+  enabled: true
+  service_name:
+  traefik_port: 80
+
+  commands:
+  commands_https:
+  env_file: floor-bot.env
+  environment:
+  port_map:
+  volumes:
+
+  disable_restart: false
+  path_prefix:
+
+- name: redis
+  image:
+    dev: redis
+    prod: redis
+  url:
+    dev:
+    prod:
+
+  auth:
+  enabled: true
+  service_name:
+  traefik_port:
+
+  commands:
+  commands_https:
+  env_file:
+  environment:
+  port_map: [6379]
+  volumes:
+
+  disable_restart: false
+  path_prefix:
+
+- name: ticket-bot
+  image:
+    dev: sralloza/ticket-bot:stable
+    prod: sralloza/ticket-bot:stable-arm
+  url:
+    dev: ticket-bot.local.es
+    prod: ticket-bot.sralloza.es
+
+  auth:
+  enabled: true
+  service_name:
+  traefik_port: 80
+
+  commands:
+  commands_https:
+  env_file: ticket-bot.env
+  environment:
+  port_map:
+  volumes:
+
+  disable_restart: false
+  path_prefix:
+
+- name: router
+  image:
+    dev: nginx
+    prod: sralloza/router
+  url:
+    dev: router.local.es
+    prod: router.sralloza.es
+
+  auth: default
+  enabled: false
+  service_name:
+  traefik_port: 80
+
+  commands:
+  commands_https:
+  env_file:
+  environment:
+  port_map:
+  volumes:
+    - ./logs:/var/log/nginx
+    - ./settings/router:/etc/nginx/conf.d
+
+  disable_restart: false
+  path_prefix:
+
+- name: management
+  image:
+    dev: nginx
+    prod: nginx
+  url:
+    dev: logs.local.es
+    prod: logs.sralloza.es
+
+  auth: default
+  enabled: false
+  service_name:
+  traefik_port: 80
+
+  commands:
+  commands_https:
+  env_file:
+  environment:
+  port_map:
+  volumes:
+    - ./logs:/var/log/nginx
+    - ./settings/management:/etc/nginx/conf.d
+
+  disable_restart: false
+  path_prefix:
+
+- name: phpmyadmin
+  image:
+    dev: phpmyadmin/phpmyadmin
+    prod: phpmyadmin:latest
+  url:
+    dev: data.local.es
+    prod: database.sralloza.es
+
+  auth: default
+  enabled: false
+  service_name:
+  traefik_port: 80
+
+  commands:
+  commands_https:
+  env_file:
+  environment:
+    PMA_HOST: database
+  port_map:
+  volumes:
+    - ./logs:/var/log/apache/
+    - ./settings/phpmyadmin:/etc/apache2/sites-available
+
+  disable_restart: false
+  path_prefix:
+
+- name: database
+  image:
+    dev: mysql:5.7
+    prod: jsurf/rpi-mariadb:latest
+  url:
+    dev:
+    prod:
+
+  auth:
+  enabled: false
+  service_name:
+  traefik_port:
+
+  commands:
+  commands_https:
+  env_file: database.env
+  environment:
+  port_map:
+  volumes:
+    - ./data/database:/var/lib/mysql
+
+  disable_restart: false
+  path_prefix:
+
+- name: grafana
+  image:
+    dev: grafana/grafana:6.1.6
+    prod: grafana/grafana:6.1.6
+  url:
+    dev: dashboard.local.es
+    prod: dashboard.sralloza.es
+
+  auth: default
+  enabled: false
+  service_name:
+  traefik_port: 3000
+
+  commands:
+  commands_https:
+  env_file:
+  environment:
+    GF_INSTALL_PLUGINS: grafana-piechart-panel
+  port_map:
+  volumes:
+    - ./data/grafana:/var/lib/grafana
+
+  disable_restart: false
+  path_prefix:
+
+- name: prometheus
+  image:
+    dev: wshihadeh/prometheus:v2.16.0
+    prod: prom/prometheus-linux-armv7:v2.16.0
+  url:
+    dev: metrics.local.es
+    prod: metrics.sralloza.es
+
+  auth: default
+  enabled: false
+  service_name:
+  traefik_port: 9090
+
+  commands:
+    - --config.file=/etc/prometheus/prometheus-settings.yml
+    - --storage.tsdb.path=/prometheus
+  commands_https:
+  env_file:
+  environment:
+  port_map:
+  volumes:
+    - ./settings/prometheus/prometheus.yml:/etc/prometheus/prometheus-settings.yml
+    - ./data/prometheus:/prometheus
+
+  disable_restart: false
+  path_prefix:

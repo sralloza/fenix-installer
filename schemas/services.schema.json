@@ -1,0 +1,103 @@
+{
+  "title": "Services",
+  "type": "array",
+  "items": {
+    "required": [
+      "name",
+      "image",
+      "url",
+      "auth",
+      "enabled",
+      "service_name",
+      "traefik_port",
+      "commands",
+      "commands_https",
+      "env_file",
+      "environment",
+      "port_map",
+      "volumes",
+      "disable_restart",
+      "path_prefix"
+    ],
+    "additionalProperties": false,
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "image": {
+        "type": "object",
+        "required": ["dev", "prod"],
+        "properties": {
+          "dev": {
+            "type": ["string", "null"]
+          },
+          "prod": {
+            "type": ["string", "null"]
+          }
+        }
+      },
+      "url": {
+        "type": "object",
+        "required": ["dev", "prod"],
+        "properties": {
+          "dev": {
+            "type": ["string", "null"]
+          },
+          "prod": {
+            "type": ["string", "null"]
+          }
+        }
+      },
+      "auth": {
+        "type": ["string", "null"]
+      },
+      "enabled": {
+        "type": "boolean"
+      },
+      "service_name": {
+        "type": ["string", "null"]
+      },
+      "traefik_port": {
+        "type": ["integer", "null"]
+      },
+      "commands": {
+        "type": ["array", "null"],
+        "items": {
+          "type": "string"
+        }
+      },
+      "commands_https": {
+        "type": ["array", "null"],
+        "items": {
+          "type": "string"
+        }
+      },
+      "env_file": {
+        "type": ["string", "null"]
+      },
+      "environment": {
+        "type": ["object", "null"],
+        "additionalProperties": { "type": "string" }
+      },
+      "port_map": {
+        "type": ["array", "null"],
+        "items": {
+          "type": "integer"
+        }
+      },
+      "volumes": {
+        "type": ["array", "null"],
+        "items": {
+          "type": "string"
+        }
+      },
+      "disable_restart": {
+        "type": "boolean"
+      },
+      "path_prefix": {
+        "type": ["string", "null"],
+        "pattern": "^/[\\w\\-]+$"
+      }
+    }
+  }
+}

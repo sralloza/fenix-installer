@@ -1,0 +1,23 @@
+- name: dev.unsecure
+  https: false
+  prod: false
+  traefik_token:
+  enabled: true
+
+- name: dev.secure
+  https: true
+  prod: false
+  traefik_token:
+  enabled: false
+
+- name: prod.unsecure
+  https: false
+  prod: true
+  traefik_token: 17c90343-9f5c-4bde-9f3f-821563b7cf65
+  enabled: true
+
+- name: prod.secure
+  https: true
+  prod: true
+  traefik_token: 17c90343-9f5c-4bde-9f3f-821563b7cf65
+  enabled: false
