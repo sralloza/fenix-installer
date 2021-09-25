@@ -40,3 +40,10 @@ class ServiceNotFoundError(ClickException):
 
 class TryAgainError(ClickException):
     """Raised when the client needs to run a command again."""
+
+
+class DockerNotRunningError(ClickException):
+    """Raised when the docker daemon is not running."""
+
+    def __init__(self):
+        super().__init__("The docker daemon is not running")

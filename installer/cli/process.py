@@ -1,3 +1,4 @@
+from installer.cli.exceptions import DockerNotRunningError
 import logging
 import subprocess
 from typing import Dict, List
@@ -13,7 +14,18 @@ logger = logging.getLogger(__name__)
 logging.basicConfig()
 
 
+def is_docker_running():
+    try:
+        subprocess.check_output(["docker", "info"], stderr=False)
+        return True
+    except subprocess.CalledProcessError:
+        return False
+
+
 def run_docker_compose_command(args: List[str]):
+    if not is_docker_running():
+        raise DockerNotRunningError()
+
     debug = click.get_current_context().obj["debug"]
     profile = get_default_profile()
     with profile_context(profile, debug) as profile_path:
