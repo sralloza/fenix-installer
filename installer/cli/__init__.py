@@ -74,10 +74,12 @@ def secrets_list(service: str, raw):
 
 @cli.group("docker", no_args_is_help=True, help="Manage the deployment")
 @click.option("--debug", is_flag=True)
+@click.option("--ignore-daemon", is_flag=True)
 @click.pass_context
-def docker(ctx: click.Context, debug: bool):
+def docker(ctx: click.Context, debug: bool, ignore_daemon):
     ctx.ensure_object(dict)
     ctx.obj["debug"] = debug
+    ctx.obj["ignore-daemon"] = ignore_daemon
 
 
 @docker.command("up", help="Create and start service containers")

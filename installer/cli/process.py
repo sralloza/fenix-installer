@@ -1,9 +1,10 @@
-from installer.cli.exceptions import DockerNotRunningError
 import logging
 import subprocess
 from typing import Dict, List
 
 import click
+
+from installer.cli.exceptions import DockerNotRunningError
 
 from ..architecture import FENIX_DIR
 from ..context import profile_context
@@ -23,10 +24,12 @@ def is_docker_running():
 
 
 def run_docker_compose_command(args: List[str]):
-    if not is_docker_running():
+    debug = click.get_current_context().obj["debug"]
+    ignore_daemon = click.get_current_context().obj["ignore-daemon"]
+
+    if not ignore_daemon and not is_docker_running():
         raise DockerNotRunningError()
 
-    debug = click.get_current_context().obj["debug"]
     profile = get_default_profile()
     with profile_context(profile, debug) as profile_path:
         args = ["docker-compose", "-f", profile_path.as_posix()] + args

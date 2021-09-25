@@ -38,6 +38,15 @@ class ServiceNotFoundError(ClickException):
         super().__init__(msg)
 
 
+class ProfileNotFoundError(ClickException):
+    """Raised if no profile was found with a specified name."""
+
+    def __init__(self, profile_name: str):
+        self.profile_name = profile_name
+        msg = f"No profile was found with name {profile_name!r}"
+        super().__init__(msg)
+
+
 class TryAgainError(ClickException):
     """Raised when the client needs to run a command again."""
 

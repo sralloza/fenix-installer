@@ -1,5 +1,7 @@
 from typing import Iterator
 
+from .architecture import DEFAULT_PROFILE
+from .cli.exceptions import ProfileNotFoundError
 from .inputs import get_auths, get_profiles
 from .models import Profile, Service
 
@@ -82,4 +84,7 @@ def get_labels(service, profile: Profile) -> Iterator[str]:
 
 
 def get_default_profile() -> Profile:
-    return get_profiles()[0]
+    for profile in get_profiles():
+        if profile.name == DEFAULT_PROFILE:
+            return profile
+    raise ProfileNotFoundError(DEFAULT_PROFILE)

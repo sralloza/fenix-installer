@@ -6,9 +6,9 @@ from pathlib import Path
 import click
 
 if platform.system() == "Linux":
-    DEFAULT_PROFILE = "prod.unsecure.yml"
+    DEFAULT_PROFILE = "prod.unsecure"
 else:
-    DEFAULT_PROFILE = "dev.unsecure.yml"
+    DEFAULT_PROFILE = "dev.unsecure"
 
 FENIX_DIR = os.getenv("FENIX_DIR")
 if not FENIX_DIR:
