@@ -1,9 +1,8 @@
-from pathlib import Path
-from sys import is_finalizing
 from typing import List, Optional
 
 import click
 
+from ..architecture import *
 from ..schemas import validate_all
 from .core import DockerCompose, Secrets
 from .utils import check_env, get_service_names, get_service_names_with_secrets
@@ -189,6 +188,30 @@ def docker_pull(services: _S):
 @click.option("-t", "--timestamps", is_flag=True, help="Show timestamps")
 def docker_dev(service: str, tail: bool, timestamps: bool):
     DockerCompose.dev(service, tail, timestamps)
+
+
+@cli.command("paths", help="Show installer paths")
+@click.option("-r", "--relative", is_flag=True, help="Show relative paths")
+def paths_command(relative: bool):
+    paths = (
+        ("FENIX_DIR", FENIX_DIR),
+        ("INSTALLER_MODULE_DIR", INSTALLER_MODULE_DIR),
+        ("INSTALLER_DATA_DIR", INSTALLER_DATA_DIR),
+        ("CONFIG_DIR", CONFIG_DIR),
+        ("SCHEMAS_DIR", SCHEMAS_DIR),
+        ("TEMPLATES_DIR", TEMPLATES_DIR),
+    )
+    for path_name, path in paths:
+        click.secho(path_name + " → ", nl=False, fg="bright_cyan")
+        if relative:
+            try:
+                click.echo(path.relative_to(Path.cwd()).as_posix())
+            except ValueError:
+                click.secho(path.as_posix(), fg="bright_yellow")
+        else:
+            click.echo(path.as_posix())
+
+    click.echo()
 
 
 def main():
