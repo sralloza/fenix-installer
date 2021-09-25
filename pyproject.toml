@@ -11,7 +11,7 @@ fenix = 'installer.cli:main'
 installer = 'installer.cli:main'
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.7 || ^3.8 || ^3.9"
 boto3 = "^1.18.48"
 click = "^8.0.1"
 attr = "^0.3.1"
