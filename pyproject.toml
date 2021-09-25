@@ -3,7 +3,9 @@ name = "fenix-installer"
 version = "0.1.0"
 description = ""
 authors = ["Diego Alloza González <sralloza@gmail.com>"]
-
+packages = [
+    { include = "installer" },
+]
 [tool.poetry.scripts]
 fenix = 'installer.cli:main'
 installer = 'installer.cli:main'
